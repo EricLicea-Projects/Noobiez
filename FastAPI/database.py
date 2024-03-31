@@ -1,7 +1,7 @@
 import sqlite3
 from sqlite3 import Error
 
-DATABASE = ''
+DATABASE = '/database/noobiez.db'
 
 def create_connection():
     conn = None

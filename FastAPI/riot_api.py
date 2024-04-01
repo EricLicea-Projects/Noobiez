@@ -1,5 +1,5 @@
 import httpx
-from config_loader import API_KEY
+from FastAPI.config.config_loader import API_KEY
 
 async def fetch_from_riot_api(url: str):
     headers = {"X-Riot-Token": API_KEY}

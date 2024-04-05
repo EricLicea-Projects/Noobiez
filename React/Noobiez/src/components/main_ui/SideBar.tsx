@@ -1,13 +1,20 @@
 import { VStack } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 import SidebarButton from "./SidebarButton";
 
-const buttonNames = ["Home", "Profiles", "Stats"];
+const routes = [
+  { path: "/", name: "Home" },
+  { path: "/profiles", name: "Profiles" },
+  { path: "/stats", name: "Stats" },
+];
 
 const SideBar = () => {
   return (
-    <VStack align="stretch">
-      {buttonNames.map((name) => (
-        <SidebarButton key={name} name={name} />
+    <VStack>
+      {routes.map((route) => (
+        <Link to={route.path} key={route.name}>
+          <SidebarButton name={route.name} />
+        </Link>
       ))}
     </VStack>
   );

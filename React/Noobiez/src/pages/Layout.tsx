@@ -21,7 +21,7 @@ const Layout = () => {
       <GridItem area="nav" bg="blackAlpha.300">
         <SideBar />
       </GridItem>
-      <GridItem area="main" bg="red.200">
+      <GridItem area="main" bg="blackAlpha.300">
         <Outlet />
       </GridItem>
     </Grid>

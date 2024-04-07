@@ -1,9 +1,19 @@
 from fastapi import FastAPI, Depends, HTTPException, Query
-from database import create_connection, upsert_player_data
+from fastapi.middleware.cors import CORSMiddleware
+from database import create_connection, upsert_player_data, get_player_info
 from riot_api import get_riot_account_info, get_summoner_info
 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*'],
+)
+
 
 def get_db():
     try:
@@ -34,3 +44,11 @@ async def get_player(name: str = Query(...), tag: str = Query(...)):
     
     return player_data
 
+
+@app.get("/players/")
+async def read_player(gameName: str, tagLine: str):
+    player_info = get_player_info(gameName, tagLine)
+    if player_info:
+        return player_info
+    else:
+        raise HTTPException(status_code=404, detail="Player not found")

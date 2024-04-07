@@ -37,3 +37,30 @@ def upsert_player_data(player_data):
     finally:
         if conn:
             conn.close()
+
+
+def get_player_info(name: str, tag: str):
+    conn = create_connection()  # Use the connection created by create_connection
+    if conn is None:
+        print("Error! cannot create the database connection.")
+        return None
+
+    try:
+        cursor = conn.cursor()
+        query = '''SELECT gameName, tagLine, profileIconId, summonerLevel
+                   FROM players
+                   WHERE gameName = ? AND tagLine = ?'''
+        cursor.execute(query, (name, tag))
+        result = cursor.fetchone()
+    except sqlite3.Error as e:
+        print(e)
+        return None
+    finally:
+        if conn:
+            conn.close()
+    
+    if result:
+        keys = ['gameName', 'tagLine', 'profileIconId', 'summonerLevel']
+        return dict(zip(keys, result))
+    else:
+        return None

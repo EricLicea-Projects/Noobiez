@@ -2,7 +2,7 @@ import sqlite3
 
 conn = sqlite3.connect('../noobiez.db')
 
-with open('player.sql', 'r') as f:
+with open('teams.sql', 'r') as f:
     sql_script = f.read()
 
 try:

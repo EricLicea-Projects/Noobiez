@@ -24,3 +24,8 @@ async def get_summoner_info(puuid: str):
 async def get_match_ids(puuid: str) -> list:
     url = f"https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids"
     return await fetch_from_riot_api(url)
+
+
+async def get_match_data(match_id: str):
+    url = f"https://americas.api.riotgames.com/lol/match/v5/matches/{match_id}"
+    return await fetch_from_riot_api(url)

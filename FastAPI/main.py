@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from database import create_connection, upsert_player_data, get_player_info
-from riot_api import get_riot_account_info, get_summoner_info, get_match_ids, get_match_data
+from database import *
+from riot_api import *
 
 
 app = FastAPI()
@@ -23,9 +23,9 @@ def get_db():
         db.close()
 
 
-@app.get('/player/')
-async def get_player(name: str = Query(...), tag: str = Query(...)):
-    player_data = await get_riot_account_info(name, tag)
+@app.get('/riotAPI/player/')
+async def get_player(gameName: str = Query(...), tagLine: str = Query(...)):
+    player_data = await get_riot_account_info(gameName, tagLine)
 
     puuid = player_data.get('puuid')
 
@@ -45,20 +45,29 @@ async def get_player(name: str = Query(...), tag: str = Query(...)):
     return player_data
 
 
-@app.get("/players/")
+@app.get('/riotAPI/matches/')
+async def get_matches(puuid: str = Query(...)):
+    match_ids = await get_match_ids(puuid)
+    if match_ids:
+        new_match_ids = filter_existing_matches(match_ids)
+        if not new_match_ids:
+            return {"message": "No new matches to process."}
+
+        # matches_data = []
+        for match_id in new_match_ids:
+            match_data = await get_match_data(match_id)
+            insert_match_data(match_data)
+            # matches_data.append(match_data)
+        return {"New Match Data": new_match_ids}
+    else:
+        raise HTTPException(status_code=400, detail="Player not Found")
+    
+
+@app.get("/noobiez/player")
 async def read_player(gameName: str = Query(...), tagLine: str = Query(...)):
     player_info = get_player_info(gameName, tagLine)
     if player_info:
         return player_info
     else:
-        raise HTTPException(status_code=404, detail="Player not found")
+        return await get_player(gameName, tagLine)
 
-
-@app.get('/matches/')
-async def get_matches(puuid: str = Query(...)):
-    match_ids = await get_match_ids(puuid)
-    if match_ids:
-        first_match_data = await get_match_data(match_ids[0])
-        return first_match_data
-    else:
-        raise HTTPException(status_code=400, detail="Player not Found")

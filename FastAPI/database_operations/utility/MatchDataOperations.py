@@ -18,13 +18,13 @@ def insert_participants(conn, participant_data):
         magicDamageDealtToChampions, magicDamageTaken, defense, flex, 
         offense, primaryPerk0, primaryPerk1, primaryPerk2, primaryPerk3, primaryStyle, 
         subPerk0, subPerk1, subStyle, physicalDamageDealtToChampions, 
-        physicalDamageTaken, summoner1Id, summoner2Id, teamId, 
+        physicalDamageTaken, summoner1Id, summoner2Id, summonerId, summonerLevel, teamPosition, teamId, 
         totalDamageDealtToChampions, totalDamageTaken, totalTimeSpentDead, 
         trueDamageDealtToChampions, trueDamageTaken, turretTakedowns, 
         visionWardsBoughtInGame, wardsKilled, wardsPlaced, neutralMinionsKilled, 
         totalMinionsKilled, largestMultiKill, goldPerMinute, kda, killParticipation
     ) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """
     for participant in participant_data:
         conn.execute(sql, (
@@ -40,6 +40,7 @@ def insert_participants(conn, participant_data):
             participant['primaryPerk3'], participant['primaryStyle'], participant['subPerk0'],
             participant['subPerk1'], participant['subStyle'], participant['physicalDamageDealtToChampions'],
             participant['physicalDamageTaken'], participant['summoner1Id'], participant['summoner2Id'],
+            participant['summonerId'], participant['summonerLevel'], participant['teamPosition'],
             participant['teamId'], participant['totalDamageDealtToChampions'], participant['totalDamageTaken'],
             participant['totalTimeSpentDead'], participant['trueDamageDealtToChampions'],
             participant['trueDamageTaken'], participant['turretTakedowns'], participant['visionWardsBoughtInGame'],

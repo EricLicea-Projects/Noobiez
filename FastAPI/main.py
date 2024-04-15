@@ -71,3 +71,11 @@ async def read_player(gameName: str = Query(...), tagLine: str = Query(...)):
     else:
         return await get_player(gameName, tagLine)
 
+
+@app.get('/noobiez/matches')
+async def read_matches(puuid: str = Query(...)):
+    matches_data = fetch_player_games(puuid)
+    if matches_data:
+        return matches_data
+    else:
+        return await get_matches(puuid)

@@ -106,3 +106,76 @@ def filter_existing_matches(match_ids: List[str]) -> List[str]:
         if conn:
             conn.close()
     return []
+
+
+def fetch_player_games(puuid):
+    conn = create_connection()
+    if conn is None:
+        return []
+    
+    try:
+        cursor = conn.cursor()
+        
+        # Query to find all matches for a given puuid
+        match_query = '''
+        SELECT DISTINCT p.matchId
+        FROM participants p
+        WHERE p.puuid = ?
+        '''
+        cursor.execute(match_query, (puuid,))
+        match_ids = cursor.fetchall()
+        
+        games = []
+        
+        # Query to fetch basic match details for each matchId
+        for (matchId,) in match_ids:
+            match_details_query = '''
+            SELECT matchId, queueId, gameCreation, gameEndTimestamp
+            FROM matches
+            WHERE matchId = ?
+            '''
+            cursor.execute(match_details_query, (matchId,))
+            match_details = cursor.fetchone()
+            match_info = {
+                "matchId": match_details[0],
+                "queueId": match_details[1],
+                "gameCreation": match_details[2],
+                "gameEndTimestamp": match_details[3]
+            }
+            
+            # Query to fetch all participant details for the match
+            participants_query = '''
+            SELECT *
+            FROM participants
+            WHERE matchId = ?
+            '''
+            cursor.execute(participants_query, (matchId,))
+            participant_rows = cursor.fetchall()
+            participant_columns = [column[0] for column in cursor.description]
+            participants = [{participant_columns[i]: row[i] for i in range(len(participant_columns))} for row in participant_rows]
+            
+            # Query to fetch all team details for the match
+            teams_query = '''
+            SELECT *
+            FROM teams
+            WHERE matchId = ?
+            '''
+            cursor.execute(teams_query, (matchId,))
+            team_rows = cursor.fetchall()
+            team_columns = [column[0] for column in cursor.description]
+            teams = [{team_columns[i]: row[i] for i in range(len(team_columns))} for row in team_rows]
+            
+            # Combine match information with participants and teams into a structured format
+            game = {
+                "match_info": match_info,
+                "participants": participants,
+                "teams": teams
+            }
+            games.append(game)
+        
+        return games
+    except Error as e:
+        print(f'Fetching error from Noobiez Database: {e}')
+    finally:
+        conn.close()
+

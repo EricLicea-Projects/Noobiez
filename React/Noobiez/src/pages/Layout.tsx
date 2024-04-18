@@ -13,15 +13,14 @@ const Layout = () => {
     "header header"
     "nav main"
     `}
-      gap="2"
     >
-      <GridItem area="header" bg="blackAlpha.300">
+      <GridItem area="header" bg="blackAlpha.600">
         <NavBar />
       </GridItem>
-      <GridItem area="nav" bg="blackAlpha.300">
+      <GridItem area="nav" bg="blackAlpha.600">
         <SideBar />
       </GridItem>
-      <GridItem area="main" bg="blackAlpha.300">
+      <GridItem area="main" bg="gray.800">
         <Outlet />
       </GridItem>
     </Grid>

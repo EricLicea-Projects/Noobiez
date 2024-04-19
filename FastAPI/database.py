@@ -19,10 +19,11 @@ def create_connection():
 
 def upsert_player_data(player_data):
     sql = '''
-    INSERT INTO players(puuid, accountId, gameName, tagLine, profileIconId, summonerLevel)
-    VALUES(?,?,?,?,?,?)
+    INSERT INTO players(puuid, summonerId, accountId, gameName, tagLine, profileIconId, summonerLevel)
+    VALUES(?,?,?,?,?,?,?)
     ON CONFLICT(puuid) DO UPDATE SET
     accountId=excluded.accountId,
+    summonerId=excluded.summonerId,
     gameName=excluded.gameName,
     tagLine=excluded.tagLine,
     profileIconId=excluded.profileIconId,
@@ -32,7 +33,7 @@ def upsert_player_data(player_data):
     conn = create_connection()
     try:
         cur = conn.cursor()
-        cur.execute(sql, (player_data['puuid'], player_data['accountId'], player_data['gameName'],
+        cur.execute(sql, (player_data['puuid'], player_data['summonerId'],player_data['accountId'], player_data['gameName'],
                           player_data['tagLine'], player_data['profileIconId'], player_data['summonerLevel']))
         conn.commit()
     except Error as e:
@@ -54,7 +55,7 @@ def get_player_info(name: str, tag: str):
 
     try:
         cursor = conn.cursor()
-        query = '''SELECT puuid, gameName, tagLine, profileIconId, summonerLevel
+        query = '''SELECT puuid, accountId, summonerId, gameName, tagLine, profileIconId, summonerLevel
                    FROM players
                    WHERE REPLACE(LOWER(gameName), ' ', '') = ? AND REPLACE(LOWER(tagLine), ' ', '') = ?'''
         cursor.execute(query, (normalized_name, normalized_tag))
@@ -67,7 +68,8 @@ def get_player_info(name: str, tag: str):
             conn.close()
     
     if result:
-        keys = ['puuid','gameName', 'tagLine', 'profileIconId', 'summonerLevel']
+        print('Hello It works?')
+        keys = ['puuid','accountId','summonerId','gameName', 'tagLine', 'profileIconId', 'summonerLevel']
         return dict(zip(keys, result))
     else:
         return None

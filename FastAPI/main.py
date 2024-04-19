@@ -33,6 +33,7 @@ async def get_player(gameName: str = Query(...), tagLine: str = Query(...)):
         summoner_info = await get_summoner_info(puuid)
 
         player_data.update({
+            'summonerId': summoner_info.get('id'),
             'accountId': summoner_info.get('accountId'),
             'profileIconId': summoner_info.get('profileIconId'),
             'summonerLevel': summoner_info.get('summonerLevel')
@@ -78,4 +79,4 @@ async def read_matches(puuid: str = Query(...)):
     if matches_data:
         return matches_data
     else:
-        return await get_matches(puuid)
+        raise HTTPException(status_code=400, detail="No Match Data")

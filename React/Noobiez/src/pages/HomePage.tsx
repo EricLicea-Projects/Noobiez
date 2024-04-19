@@ -1,13 +1,41 @@
-import { FormEvent, useState } from "react";
-import { VStack, HStack, Input, Button, Heading } from "@chakra-ui/react";
+import { FormEvent, useState, useContext, useEffect } from "react";
+import {
+  VStack,
+  HStack,
+  Input,
+  Button,
+  Heading,
+  Spinner,
+} from "@chakra-ui/react";
+import { usePlayerSearch } from "../hooks/usePlayerSearch";
+import PlayerContext from "../components/context/playerContext";
 
 const HomePage = () => {
   const [riotId, setRiotId] = useState<string>("");
+  const { isLoading, error, searchPlayer } = usePlayerSearch();
+  const { playerData, setPlayerData } = useContext(PlayerContext);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    console.log("Updated playerData:", playerData);
+  }, [playerData]);
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(riotId);
+    const player = await searchPlayer(riotId);
+    console.log("Server response:", player);
+
+    if (player && !player.error) {
+      setPlayerData({ ...player });
+    } else {
+      console.error(
+        "Error retrieving player data:",
+        player?.error || "Unknown error"
+      );
+    }
+
+    setRiotId("");
   };
+
   return (
     <VStack
       spacing={4}
@@ -30,11 +58,19 @@ const HomePage = () => {
             width="auto"
             htmlSize={30}
           />
-          <Button type="submit" colorScheme="teal">
+          <Button
+            type="submit"
+            colorScheme="teal"
+            isLoading={isLoading}
+            spinner={<Spinner size="md" />}
+          >
             Search
           </Button>
         </HStack>
       </form>
+      {error && (
+        <div style={{ color: "red", textAlign: "center" }}>{error}</div>
+      )}
     </VStack>
   );
 };

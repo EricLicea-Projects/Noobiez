@@ -2,18 +2,21 @@ import { Button } from "@chakra-ui/react";
 
 interface Props {
   name: string;
+  disabled?: boolean;
 }
 
-const SidebarButton = ({ name }: Props) => {
+const SidebarButton = ({ name, disabled }: Props) => {
+  const buttonColorScheme = disabled ? "facebook" : "teal";
+
   return (
     <Button
       onClick={() => console.log({ name })}
-      colorScheme="teal"
+      colorScheme={buttonColorScheme}
       variant="ghost"
       size="lg"
       w="full"
       justifyContent="flex-start"
-      // Add additional styling as needed
+      disabled={disabled}
     >
       {name}
     </Button>

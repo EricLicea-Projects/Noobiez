@@ -1,29 +1,10 @@
 import { Box, HStack, Image, VStack } from "@chakra-ui/react";
+import { Participant } from "../../types/matchTypes";
 
 import MatchCardPerkImage from "./MatchCardPerkImage";
 import MatchCardKDA from "./MatchCardKDA";
 import MatchCardKp from "./MatchCardKp";
 import MatchCardKdaRatio from "./MatchCardKdaRatio";
-
-interface Props {
-  championId: number;
-  summoner1Id: number;
-  summoner2Id: number;
-  primaryPerk0: number;
-  subStyle: number;
-  kills: number;
-  deaths: number;
-  assists: number;
-  kdaRatio: number;
-  killParticipation: number;
-  item0: number;
-  item1: number;
-  item2: number;
-  item3: number;
-  item4: number;
-  item5: number;
-  item6: number;
-}
 
 const MatchCard = ({
   championId,
@@ -34,7 +15,7 @@ const MatchCard = ({
   kills,
   deaths,
   assists,
-  kdaRatio,
+  kda,
   killParticipation,
   item0,
   item1,
@@ -43,13 +24,19 @@ const MatchCard = ({
   item4,
   item5,
   item6,
-}: Props) => {
+}: Participant) => {
   const champion = `/champion/${championId}.png`;
   const summoner1 = `/summoner/${summoner1Id}.png`;
   const summoner2 = `/summoner/${summoner2Id}.png`;
   const perkMain = `/perks/${primaryPerk0}.png`;
   const perkStyle = `/styles/${subStyle}.png`;
   const slot1 = `/items/${item0}.png`;
+  const slot2 = `/items/${item1}.png`;
+  const slot3 = `/items/${item2}.png`;
+  const slot4 = `/items/${item3}.png`;
+  const slot5 = `/items/${item4}.png`;
+  const slot6 = `/items/${item5}.png`;
+  const slot7 = `/items/${item6}.png`;
 
   return (
     <Box
@@ -81,18 +68,18 @@ const MatchCard = ({
           </VStack>
           <VStack ml={2} spacing={0}>
             <MatchCardKDA kills={kills} deaths={deaths} assists={assists} />
-            <MatchCardKdaRatio kdaRatio={kdaRatio} />
+            <MatchCardKdaRatio kdaRatio={kda} />
             <MatchCardKp killParticipation={killParticipation} />
           </VStack>
         </HStack>
         <HStack spacing={0.5}>
           <MatchCardPerkImage src={slot1} alt="Slot 1" boxSize="30" />
-          <MatchCardPerkImage src={slot1} alt="Slot 1" boxSize="30" />
-          <MatchCardPerkImage src={slot1} alt="Slot 1" boxSize="30" />
-          <MatchCardPerkImage src={slot1} alt="Slot 1" boxSize="30" />
-          <MatchCardPerkImage src={slot1} alt="Slot 1" boxSize="30" />
-          <MatchCardPerkImage src={slot1} alt="Slot 1" boxSize="30" />
-          <MatchCardPerkImage src={slot1} alt="Slot 1" boxSize="30" />
+          <MatchCardPerkImage src={slot2} alt="Slot 1" boxSize="30" />
+          <MatchCardPerkImage src={slot3} alt="Slot 1" boxSize="30" />
+          <MatchCardPerkImage src={slot4} alt="Slot 1" boxSize="30" />
+          <MatchCardPerkImage src={slot5} alt="Slot 1" boxSize="30" />
+          <MatchCardPerkImage src={slot6} alt="Slot 1" boxSize="30" />
+          <MatchCardPerkImage src={slot7} alt="Slot 1" boxSize="30" />
         </HStack>
       </VStack>
     </Box>

@@ -59,7 +59,8 @@ async def get_matches(puuid: str = Query(...)):
             match_data = await get_match_data(match_id)
             insert_match_data(match_data)
             # matches_data.append(match_data)
-        return {"new_match_data": new_match_ids}
+        print(new_match_ids)
+        return await read_matches(puuid)
     else:
         raise HTTPException(status_code=400, detail="Player not Found")
     

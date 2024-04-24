@@ -10,14 +10,20 @@ import {
   Flex,
   HStack,
 } from "@chakra-ui/react";
+import { PlayerData } from "../context/playerContext";
+import useMatchUpdate from "../../hooks/useMatchUpdate";
 
-interface Props {
-  gameName: string;
-  tagLine: string;
-  profileIconId: number;
-}
+const PlayerCard = ({
+  gameName,
+  tagLine,
+  profileIconId,
+  puuid,
+}: PlayerData) => {
+  const { isLoading, fetchMatches } = useMatchUpdate();
 
-const PlayerCard = ({ gameName, tagLine, profileIconId }: Props) => {
+  const handleUpdate = () => {
+    fetchMatches(puuid);
+  };
   return (
     <Card maxW="sm" align="center" color="teal" bg="blackAlpha.700">
       <CardBody width="100%">
@@ -41,7 +47,13 @@ const PlayerCard = ({ gameName, tagLine, profileIconId }: Props) => {
       <Divider />
       <CardFooter>
         <ButtonGroup spacing="50">
-          <Button variant="solid" colorScheme="teal">
+          <Button
+            onClick={handleUpdate}
+            isLoading={isLoading}
+            loadingText="Updating"
+            variant="solid"
+            colorScheme="teal"
+          >
             Update
           </Button>
           <Button variant="solid" colorScheme="teal">

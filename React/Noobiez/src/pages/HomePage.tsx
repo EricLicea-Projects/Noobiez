@@ -7,10 +7,12 @@ import {
   Heading,
   Spinner,
 } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 import { usePlayerSearch } from "../hooks/usePlayerSearch";
 import PlayerContext from "../components/context/playerContext";
 
 const HomePage = () => {
+  const navigate = useNavigate();
   const [riotId, setRiotId] = useState<string>("");
   const { isLoading, error, searchPlayer } = usePlayerSearch();
   const { playerData, setPlayerData } = useContext(PlayerContext);
@@ -26,6 +28,7 @@ const HomePage = () => {
 
     if (player && !player.error) {
       setPlayerData({ ...player });
+      navigate("/profiles");
     } else {
       console.error(
         "Error retrieving player data:",

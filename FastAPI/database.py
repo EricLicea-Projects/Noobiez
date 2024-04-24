@@ -138,7 +138,7 @@ def fetch_player_games(puuid):
             '''
             cursor.execute(match_details_query, (matchId,))
             match_details = cursor.fetchone()
-            match_info = {
+            matchInfo = {
                 "matchId": match_details[0],
                 "queueId": match_details[1],
                 "gameCreation": match_details[2],
@@ -169,7 +169,7 @@ def fetch_player_games(puuid):
             
             # Combine match information with participants and teams into a structured format
             game = {
-                "match_info": match_info,
+                "matchInfo": matchInfo,
                 "participants": participants,
                 "teams": teams
             }

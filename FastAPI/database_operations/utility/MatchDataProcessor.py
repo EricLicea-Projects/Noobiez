@@ -69,7 +69,12 @@ class MatchDataProcessor:
                 'largestMultiKill': participant['largestMultiKill'],
                 'goldPerMinute': participant['challenges'].get('goldPerMinute', 0),
                 'kda': participant['challenges'].get('kda', 0),
-                'killParticipation': participant['challenges'].get('killParticipation', 0)
+                'killParticipation': participant['challenges'].get('killParticipation', 0),
+                'win': participant['win'],
+                'firstBloodAssist': participant['firstBloodAssist'],
+                'firstBloodKill': participant['firstBloodKill'],
+                'firstTowerAssist': participant['firstTowerAssist'],
+                'firstTowerKill': participant['firstTowerKill'],
             })
 
         return processed_participants

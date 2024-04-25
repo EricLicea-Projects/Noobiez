@@ -15,6 +15,9 @@ async def get_riot_account_info(name: str, tag: str):
     url = f"https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{name}/{tag}"
     return await fetch_from_riot_api(url)
 
+async def get_riot_account_puuid(puuid: str):
+    url = f"https://americas.api.riotgames.com/riot/account/v1/accounts/by-puuid/{puuid}"
+    return await fetch_from_riot_api(url)
 
 async def get_summoner_info(puuid: str):
     url = f"https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/{puuid}"

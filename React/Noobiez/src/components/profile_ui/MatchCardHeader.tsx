@@ -1,4 +1,4 @@
-import { Box, HStack, Text } from "@chakra-ui/react";
+import { HStack, Text } from "@chakra-ui/react";
 
 import { MatchInfo } from "../../types/matchTypes";
 import { queues } from "../../types/queuesTypes";
@@ -7,6 +7,7 @@ const MatchCardHeader = ({
   queueId,
   gameCreation,
   gameEndTimestamp,
+  win,
 }: MatchInfo) => {
   const gameDuration = () => {
     const creationSeconds = Math.floor(gameCreation / 1000);
@@ -45,13 +46,19 @@ const MatchCardHeader = ({
   };
 
   return (
-    <Box>
-      <HStack>
-        <Text>{queues[queueId].name}</Text>
-        <Text>{gameDuration()}</Text>
-        <Text>{gameAge()}</Text>
-      </HStack>
-    </Box>
+    <HStack
+      w={"100%"}
+      align={"center"}
+      justify={"space-around"}
+      borderBottomWidth={"2px"}
+      borderColor={"linear-gradient(to right, #004545, black)"}
+      borderRadius={"sm"}
+    >
+      <Text>{queues[queueId].name}</Text>
+      <Text>Time: {gameDuration()}</Text>
+      {win !== undefined && <Text>{win ? "Win" : "Lose"}</Text>}
+      <Text>{gameAge()}</Text>
+    </HStack>
   );
 };
 

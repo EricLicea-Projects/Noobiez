@@ -45,6 +45,27 @@ async def get_player(gameName: str = Query(...), tagLine: str = Query(...)):
     
     return player_data
 
+@app.get('/riotAPI/puuid/')
+async def get_player(puuid: str = Query(...)):
+    player_data = await get_riot_account_puuid(puuid)
+
+    puuid = player_data.get('puuid')
+
+    if puuid:
+        summoner_info = await get_summoner_info(puuid)
+
+        player_data.update({
+            'summonerId': summoner_info.get('id'),
+            'accountId': summoner_info.get('accountId'),
+            'profileIconId': summoner_info.get('profileIconId'),
+            'summonerLevel': summoner_info.get('summonerLevel')
+        })
+    else:
+        raise HTTPException(status_code=404, detail='Player no Found')
+    
+    upsert_player_data(player_data)
+    
+    return player_data
 
 @app.get('/riotAPI/matches/')
 async def get_matches(puuid: str = Query(...)):

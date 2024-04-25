@@ -22,9 +22,10 @@ def insert_participants(conn, participant_data):
         totalDamageDealtToChampions, totalDamageTaken, totalTimeSpentDead, 
         trueDamageDealtToChampions, trueDamageTaken, turretTakedowns, 
         visionWardsBoughtInGame, wardsKilled, wardsPlaced, neutralMinionsKilled, 
-        totalMinionsKilled, largestMultiKill, goldPerMinute, kda, killParticipation
+        totalMinionsKilled, largestMultiKill, goldPerMinute, kda, killParticipation,
+        win, firstBloodAssist, firstBloodKill, firstTowerAssist, firstTowerKill
     ) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """
     for participant in participant_data:
         conn.execute(sql, (
@@ -46,7 +47,8 @@ def insert_participants(conn, participant_data):
             participant['trueDamageTaken'], participant['turretTakedowns'], participant['visionWardsBoughtInGame'],
             participant['wardsKilled'], participant['wardsPlaced'], participant['neutralMinionsKilled'],
             participant['totalMinionsKilled'], participant['largestMultiKill'], participant['goldPerMinute'],
-            participant['kda'], participant['killParticipation']
+            participant['kda'], participant['killParticipation'], participant['win'], participant['firstBloodAssist'],
+            participant['firstBloodKill'], participant['firstTowerAssist'], participant['firstTowerKill'] 
         ))
 
 

@@ -56,9 +56,6 @@ const PlayerCard = ({
           >
             Update
           </Button>
-          <Button variant="solid" colorScheme="teal">
-            Live Game
-          </Button>
         </ButtonGroup>
       </CardFooter>
     </Card>

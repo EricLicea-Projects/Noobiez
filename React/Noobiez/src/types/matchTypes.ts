@@ -54,6 +54,11 @@ export interface Participant {
   goldPerMinute: number;
   kda: number;
   killParticipation: number;
+  win: number;
+  firstBloodAssist: number;
+  firstBloodKill: number;
+  firstTowerAssist: number;
+  firstTowerKill: number;
 }
 
 export interface Team {
@@ -77,6 +82,7 @@ export interface MatchInfo {
   queueId: number;
   gameCreation: number;
   gameEndTimestamp: number;
+  win?: number;
 }
 
 export interface Match {

@@ -7,12 +7,13 @@ import {
   Spinner,
   HStack,
   VStack,
-} from "@chakra-ui/react"; // Added Spinner for loading
+} from "@chakra-ui/react";
 import PlayerContext from "../components/context/playerContext";
 import useFetchMatches from "../hooks/useFetchMatches";
 import PlayerCard from "../components/profile_ui/PlayerCard";
 import MatchCard from "../components/profile_ui/MatchCard";
 import MatchCardHeader from "../components/profile_ui/MatchCardHeader";
+import MatchCardTeamContainer from "../components/profile_ui/MatchCardTeamContainer";
 
 const ProfilesPage = () => {
   const { playerData } = useContext(PlayerContext);
@@ -24,21 +25,33 @@ const ProfilesPage = () => {
     );
   };
 
+  // Render Matches
   const renderMatches = () => {
     return matches.map((match) => {
       const playerParticipant = findPlayerParticipant(match);
-      console.log(match.matchInfo.matchId);
 
       if (!playerParticipant) {
         return null; // Skip if there's no matching participant
       }
 
       return (
-        <VStack key={match.matchInfo.matchId}>
-          <MatchCardHeader {...match.matchInfo} />
-          <MatchCard
-            {...playerParticipant} // Pass the participant's data to MatchCard
-          />
+        <VStack
+          key={match.matchInfo.matchId}
+          p={1}
+          mb={3}
+          w={"840px"}
+          align={"flex-start"}
+          borderRadius="lg"
+          borderWidth={"2px"}
+          borderColor="transparent"
+          background={`linear-gradient(to right, #009c87 ,#002e2e, black), linear-gradient(to right,#009c87 ,#002e2e, black)`}
+          backgroundClip="content-box, border-box"
+        >
+          <MatchCardHeader {...match.matchInfo} win={playerParticipant.win} />
+          <HStack w={"100%"} justify={"space-between"}>
+            <MatchCard {...playerParticipant} />
+            <MatchCardTeamContainer participants={match.participants} />
+          </HStack>
         </VStack>
       );
     });

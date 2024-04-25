@@ -28,5 +28,25 @@ export const usePlayerSearch = () => {
     }
   };
 
-  return { isLoading, error, searchPlayer };
+  const searchPuuid = async (puuid: string) => {
+    setIsLoading(true);
+    setError(null);
+    const apiUrl = `http://localhost:8000/riotAPI/puuid`;
+
+    try {
+      const response = await axios.get(apiUrl, {
+        params: {
+          puuid: puuid,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      setError("Failed to fetch player data");
+      console.error("Axios error:", error.response);
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  return { isLoading, error, searchPlayer, searchPuuid };
 };

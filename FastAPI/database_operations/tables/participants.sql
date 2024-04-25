@@ -54,6 +54,11 @@ CREATE TABLE IF NOT EXISTS participants (
     goldPerMinute REAL NOT NULL,
     kda REAL NOT NULL,
     killParticipation REAL NOT NULL,
+    win INTEGER NOT NULL,
+    firstBloodAssist INTEGER NOT NULL,
+    firstBloodKill INTEGER NOT NULL,
+    firstTowerAssist INTEGER NOT NULL,
+    firstTowerKill INTEGER NOT NULL,
 
     PRIMARY KEY (matchId, participantId),
     FOREIGN KEY (matchId) REFERENCES matches(matchId)

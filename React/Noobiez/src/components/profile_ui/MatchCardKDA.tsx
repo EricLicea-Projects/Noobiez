@@ -23,9 +23,7 @@ const MatchCardKDA = ({ kills, deaths, assists }: Props) => {
 
   return (
     <Text fontSize="lg" fontWeight="bold" flexWrap={"nowrap"}>
-      <Text as="span" color="green.50">
-        {kills}
-      </Text>
+      <Text as="span">{kills}</Text>
       {" / "}
       <Text as="span" color={getDeathColor(deaths)}>
         {deaths}

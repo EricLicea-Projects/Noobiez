@@ -7,6 +7,8 @@ async def fetch_from_riot_api(url: str):
         response = await client.get(url, headers=headers)
     if response.status_code == 200:
         return response.json()
+    if response.status_code == 404:
+         print(response.json())
     else:
         response.raise_for_status()
 
@@ -31,4 +33,8 @@ async def get_match_ids(puuid: str) -> list:
 
 async def get_match_data(match_id: str):
     url = f"https://americas.api.riotgames.com/lol/match/v5/matches/{match_id}"
+    return await fetch_from_riot_api(url)
+
+async def get_live_game(puuid: str):
+    url = f"https://na1.api.riotgames.com/lol/spectator/v5/active-games/by-summoner/{puuid}"
     return await fetch_from_riot_api(url)

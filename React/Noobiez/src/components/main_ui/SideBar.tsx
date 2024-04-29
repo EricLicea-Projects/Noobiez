@@ -7,6 +7,7 @@ import PlayerContext from "../context/playerContext";
 const routes = [
   { path: "/", name: "Home" },
   { path: "/profiles", name: "Profiles" },
+  { path: "/liveGame", name: "Live Game" },
   { path: "/stats", name: "Stats" },
 ];
 

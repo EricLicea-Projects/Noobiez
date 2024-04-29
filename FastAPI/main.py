@@ -14,15 +14,6 @@ app.add_middleware(
     allow_headers=['*'],
 )
 
-
-def get_db():
-    try:
-        db = create_connection()
-        yield db
-    finally:
-        db.close()
-
-
 @app.get('/riotAPI/player/')
 async def get_player(gameName: str = Query(...), tagLine: str = Query(...)):
     player_data = await get_riot_account_info(gameName, tagLine)
@@ -46,7 +37,7 @@ async def get_player(gameName: str = Query(...), tagLine: str = Query(...)):
     return player_data
 
 @app.get('/riotAPI/puuid/')
-async def get_player(puuid: str = Query(...)):
+async def get_player_puuid(puuid: str = Query(...)):
     player_data = await get_riot_account_puuid(puuid)
 
     puuid = player_data.get('puuid')
@@ -66,6 +57,20 @@ async def get_player(puuid: str = Query(...)):
     upsert_player_data(player_data)
     
     return player_data
+
+
+@app.get('/riotAPI/liveGame')
+async def live_game(puuid: str = Query(...)):
+    live_game = await get_live_game(puuid)
+
+    if live_game:
+        if 'status' in live_game:
+            return {}
+        return live_game
+    else:
+        raise HTTPException(status_code=404, detail='No Game Found')
+    
+
 
 @app.get('/riotAPI/matches/')
 async def get_matches(puuid: str = Query(...)):

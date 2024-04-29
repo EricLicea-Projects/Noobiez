@@ -25,6 +25,13 @@ const ProfilesPage = () => {
     );
   };
 
+  const cardColor = (win: number) => {
+    const victory = `linear-gradient(to right, darkcyan, #002424,black), linear-gradient(to right, darkcyan, #002424,black)`;
+    const loss = `linear-gradient(to right,maroon,#1c0000, black), linear-gradient(to right,maroon,#1c0000, black)`;
+
+    return win ? victory : loss;
+  };
+
   // Render Matches
   const renderMatches = () => {
     return matches.map((match) => {
@@ -44,7 +51,7 @@ const ProfilesPage = () => {
           borderRadius="lg"
           borderWidth={"2px"}
           borderColor="transparent"
-          background={`linear-gradient(to right, #009c87 ,#002e2e, black), linear-gradient(to right,#009c87 ,#002e2e, black)`}
+          background={cardColor(playerParticipant.win)}
           backgroundClip="content-box, border-box"
         >
           <MatchCardHeader {...match.matchInfo} win={playerParticipant.win} />

@@ -4,6 +4,8 @@ import HomePage from "../pages/HomePage";
 import ProfilesPage from "../pages/ProfilesPage";
 import StatsPage from "../pages/StatsPage";
 import LiveGame from "../pages/LiveGame";
+import ChampionSpecialists from "../pages/ChampionSpecialists";
+import ChampionMasters from "../components/specialist_ui/ChampionMasters";
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +27,14 @@ export const router = createBrowserRouter([
       {
         path: "liveGame",
         element: <LiveGame />,
+      },
+      {
+        path: "OTP",
+        element: <ChampionSpecialists />,
+      },
+      {
+        path: "OTP/:id",
+        element: <ChampionMasters />,
       },
     ],
   },

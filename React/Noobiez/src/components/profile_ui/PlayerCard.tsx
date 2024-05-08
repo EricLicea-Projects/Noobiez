@@ -1,6 +1,7 @@
 import {
   Button,
   ButtonGroup,
+  Text,
   Card,
   CardBody,
   CardFooter,
@@ -18,6 +19,8 @@ const PlayerCard = ({
   tagLine,
   profileIconId,
   puuid,
+  tier,
+  rank,
 }: PlayerData) => {
   const { isLoading, fetchMatches } = useMatchUpdate();
 
@@ -42,6 +45,8 @@ const PlayerCard = ({
               #{tagLine}
             </Heading>
           </HStack>
+          <Image boxSize="250px" src={`rank/${tier}.png`} />
+          <Text>{`${tier} ${rank}`}</Text>
         </Flex>
       </CardBody>
       <Divider />

@@ -8,6 +8,8 @@ export interface PlayerData {
   tagLine: string;
   profileIconId: number;
   summonerLevel: number;
+  tier: string;
+  rank: string;
 }
 
 interface PlayerContextType {

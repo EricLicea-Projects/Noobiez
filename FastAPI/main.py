@@ -34,6 +34,18 @@ async def get_player(gameName: str = Query(...), tagLine: str = Query(...)):
     
     upsert_player_data(player_data)
     
+    summoner_rank_info = await get_summoner_rank(summoner_info.get('id'))
+    ranked_solo_info = next((item for item in summoner_rank_info if item['queueType'] == 'RANKED_SOLO_5x5'), None)
+
+    if ranked_solo_info:
+        # Update player_data with tier and rank information
+        player_data['tier'] = ranked_solo_info['tier']
+        player_data['rank'] = ranked_solo_info['rank']
+    else:
+        # Optionally handle the case where RANKED_SOLO_5x5 data is not found
+        player_data['tier'] = 'Unranked'
+        player_data['rank'] = 'Unranked'
+
     return player_data
 
 @app.get('/riotAPI/puuid/')
@@ -55,6 +67,18 @@ async def get_player_puuid(puuid: str = Query(...)):
         raise HTTPException(status_code=404, detail='Player no Found')
     
     upsert_player_data(player_data)
+
+    summoner_rank_info = await get_summoner_rank(summoner_info.get('id'))
+    ranked_solo_info = next((item for item in summoner_rank_info if item['queueType'] == 'RANKED_SOLO_5x5'), None)
+
+    if ranked_solo_info:
+        # Update player_data with tier and rank information
+        player_data['tier'] = ranked_solo_info['tier']
+        player_data['rank'] = ranked_solo_info['rank']
+    else:
+        # Optionally handle the case where RANKED_SOLO_5x5 data is not found
+        player_data['tier'] = 'Unranked'
+        player_data['rank'] = 'Unranked'
     
     return player_data
 
@@ -107,3 +131,11 @@ async def read_matches(puuid: str = Query(...)):
         return matches_data
     else:
         raise HTTPException(status_code=400, detail="No Match Data")
+
+@app.get("/noobiez/win_rate")
+async def get_win_rate():
+    win_rate = analyze_data()
+    if True:
+        return win_rate
+    else:
+        raise HTTPException(status_code=400, detail='No Win Rate')

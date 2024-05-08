@@ -9,6 +9,7 @@ const routes = [
   { path: "/profiles", name: "Profiles" },
   { path: "/liveGame", name: "Live Game" },
   { path: "/stats", name: "Stats" },
+  { path: "/OTP", name: "Specialists" },
 ];
 
 const SideBar = () => {
@@ -16,21 +17,27 @@ const SideBar = () => {
 
   return (
     <VStack>
-      {routes.map((route) => (
-        <Link
-          to={route.path}
-          key={route.name}
-          style={{
-            pointerEvents:
-              route.name !== "Home" && !playerData ? "none" : "auto",
-          }}
-        >
-          <SidebarButton
-            name={route.name}
-            disabled={route.name !== "Home" && !playerData}
-          />
-        </Link>
-      ))}
+      {routes.map((route) => {
+        // Conditionally render buttons based on playerData
+        if (
+          route.name === "Home" ||
+          route.name === "Specialists" ||
+          playerData
+        ) {
+          return (
+            <Link
+              to={route.path}
+              key={route.name}
+              style={{
+                pointerEvents: "auto",
+              }}
+            >
+              <SidebarButton name={route.name} disabled={false} />
+            </Link>
+          );
+        }
+        return null; // Do not render the button if playerData is not present and the route requires it
+      })}
     </VStack>
   );
 };

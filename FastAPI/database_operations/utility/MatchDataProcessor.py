@@ -20,7 +20,7 @@ class MatchDataProcessor:
                 'puuid': participant['puuid'],
                 'riotIdGameName': participant['riotIdGameName'],
                 'assists': participant['assists'],
-                'baronTakedowns': participant['challenges']['baronTakedowns'],
+                'baronTakedowns': participant['challenges'].get('baronTakedowns', 0),
                 'champLevel': participant['champLevel'],
                 'championId': participant['championId'],
                 'deaths': participant['deaths'],

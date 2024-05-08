@@ -1,5 +1,9 @@
+import os
 import httpx
-from config.config_loader import API_KEY
+from dotenv import load_dotenv
+
+load_dotenv()
+API_KEY = os.getenv('API_KEY')
 
 async def fetch_from_riot_api(url: str):
     headers = {"X-Riot-Token": API_KEY}
@@ -17,17 +21,30 @@ async def get_riot_account_info(name: str, tag: str):
     url = f"https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{name}/{tag}"
     return await fetch_from_riot_api(url)
 
+
 async def get_riot_account_puuid(puuid: str):
     url = f"https://americas.api.riotgames.com/riot/account/v1/accounts/by-puuid/{puuid}"
     return await fetch_from_riot_api(url)
+
 
 async def get_summoner_info(puuid: str):
     url = f"https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/{puuid}"
     return await fetch_from_riot_api(url)
 
 
-async def get_match_ids(puuid: str) -> list:
-    url = f"https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids"
+async def get_summoner_rank(summoner_id: str):
+    url = f"https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/{summoner_id}"
+    return await fetch_from_riot_api(url)
+
+
+
+# async def get_match_ids(puuid: str) -> list:
+#     url = f"https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids"
+#     return await fetch_from_riot_api(url)
+
+
+async def get_match_ids(puuid: str, queue_type: int = 420, count: int = 75) -> list:
+    url = f"https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?queue={queue_type}&start=0&count={count}"
     return await fetch_from_riot_api(url)
 
 

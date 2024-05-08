@@ -1,4 +1,5 @@
 import sqlite3
+import pandas as pd
 from sqlite3 import Error
 from typing import Any, Dict, List
 from database_operations.utility.MatchDataProcessor import MatchDataProcessor
@@ -181,3 +182,72 @@ def fetch_player_games(puuid):
     finally:
         conn.close()
 
+
+def find_proficient_players_for_all_champions():
+    conn = create_connection()
+    if conn is None:
+        print("Error! cannot create the database connection.")
+        return []
+
+    try:
+        cursor = conn.cursor()
+        query = '''
+        SELECT puuid, riotIdGameName, championId, COUNT(*) AS games, SUM(win) AS wins,
+               (SUM(win) * 100.0 / COUNT(*)) AS win_rate
+        FROM participants
+        GROUP BY summonerId, championId
+        HAVING games >= 3 AND (SUM(win) * 100.0 / COUNT(*)) >= 52
+        ORDER BY championId, win_rate DESC
+        '''
+        cursor.execute(query)
+        results = cursor.fetchall()
+
+        # Define the keys for the dictionary to be returned
+        keys = ['puuid', 'riotIdGameName', 'championId', 'games', 'wins', 'win_rate']
+        return [dict(zip(keys, result)) for result in results]
+    except Error as e:
+        print(f"Database error when finding proficient players: {e}")
+    finally:
+        if conn:
+            conn.close()
+    
+    return []
+
+
+def analyze_data():
+    conn = create_connection()
+    if conn is None:
+        print("Error! cannot create the database connection.")
+        return []
+
+    query = '''
+    SELECT championId, summonerId, win, item0, item1, item2, item3, item4, item5, primaryPerk0, primaryPerk1, primaryPerk2, primaryPerk3
+    FROM participants
+    '''
+    df = pd.read_sql_query(query, conn)
+
+    # Calculate win rate by summonerId and championId
+    df['win_count'] = df['win']
+    win_rates = df.groupby(['summonerId', 'championId']).agg({
+        'win': 'sum',
+        'win_count': 'count'
+    }).rename(columns={'win': 'total_wins', 'win_count': 'games_played'})
+    win_rates['win_rate'] = (win_rates['total_wins'] / win_rates['games_played']) * 100
+
+    # Filter out players with less than 10 games and a win rate lower than 52%
+    proficient_players = win_rates[(win_rates['games_played'] >= 10) & (win_rates['win_rate'] >= 52)]
+
+    # Merge back to original DataFrame to filter and keep only proficient players' data
+    proficient_df = df.merge(proficient_players, on=['summonerId', 'championId'])
+
+    # Analyze common items and perks
+    item_columns = ['item0', 'item1', 'item2', 'item3', 'item4', 'item5']
+    perk_columns = ['primaryPerk0', 'primaryPerk1', 'primaryPerk2', 'primaryPerk3']
+
+    # Count frequency of items and perks
+    item_frequencies = proficient_df[item_columns].apply(pd.Series.value_counts).sum(axis=1).sort_values(ascending=False)
+    perk_frequencies = proficient_df[perk_columns].apply(pd.Series.value_counts).sum(axis=1).sort_values(ascending=False)
+
+    # return item_frequencies, perk_frequencies
+
+    return item_frequencies.head()

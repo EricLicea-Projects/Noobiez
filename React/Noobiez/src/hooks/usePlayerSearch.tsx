@@ -9,7 +9,7 @@ export const usePlayerSearch = () => {
     setIsLoading(true);
     setError(null);
     const [gameName, tagLine] = riotId.split("#");
-    const apiUrl = `http://localhost:8000/noobiez/player`;
+    const apiUrl = `http://localhost:8000/riotAPI/player`;
 
     try {
       const response = await axios.get(apiUrl, {

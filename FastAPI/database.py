@@ -5,6 +5,15 @@ from typing import Any, Dict, List
 from database_operations.utility.MatchDataProcessor import MatchDataProcessor
 from database_operations.utility.MatchDataOperations import *
 
+style_to_perks = {
+    "8100": [8112, 8124, 8128, 9923, 8126, 8139, 8143, 8135, 8138, 8136, 8120, 8134, 8105, 8106],
+    "8300": [8351, 8360, 8369, 8306, 8304, 8313, 8321, 8316, 8345, 8347, 8410, 8352],
+    "8000": [8005, 8008, 8021, 8010, 9101, 9111, 8009, 9104, 9105, 9103, 8014, 8017, 8299],
+    "8400": [8437, 8439, 8465, 8446, 8463, 8401, 8429, 8444, 8473, 8451, 8453, 8242],
+    "8200": [8214, 8229, 8230, 8224, 8226, 8275, 8210, 8234, 8233, 8237, 8232, 8236]
+}
+
+
 DATABASE = 'database_operations/noobiez.db'
 
 def create_connection():
@@ -183,71 +192,99 @@ def fetch_player_games(puuid):
         conn.close()
 
 
-def find_proficient_players_for_all_champions():
+def load_data_specialist():
     conn = create_connection()
     if conn is None:
         print("Error! cannot create the database connection.")
-        return []
-
-    try:
-        cursor = conn.cursor()
-        query = '''
-        SELECT puuid, riotIdGameName, championId, COUNT(*) AS games, SUM(win) AS wins,
-               (SUM(win) * 100.0 / COUNT(*)) AS win_rate
-        FROM participants
-        GROUP BY summonerId, championId
-        HAVING games >= 3 AND (SUM(win) * 100.0 / COUNT(*)) >= 52
-        ORDER BY championId, win_rate DESC
-        '''
-        cursor.execute(query)
-        results = cursor.fetchall()
-
-        # Define the keys for the dictionary to be returned
-        keys = ['puuid', 'riotIdGameName', 'championId', 'games', 'wins', 'win_rate']
-        return [dict(zip(keys, result)) for result in results]
-    except Error as e:
-        print(f"Database error when finding proficient players: {e}")
-    finally:
-        if conn:
-            conn.close()
-    
-    return []
-
-
-def analyze_data():
-    conn = create_connection()
-    if conn is None:
-        print("Error! cannot create the database connection.")
-        return []
+        return pd.DataFrame()  # Return an empty DataFrame on failure
 
     query = '''
-    SELECT championId, summonerId, win, item0, item1, item2, item3, item4, item5, primaryPerk0, primaryPerk1, primaryPerk2, primaryPerk3
+    SELECT puuid, riotIdGameName, championId, win, primaryPerk0, primaryPerk1, primaryPerk2, primaryPerk3, subPerk0, subPerk1, primaryStyle, subStyle
     FROM participants
     '''
     df = pd.read_sql_query(query, conn)
+    conn.close()
+    return df
 
-    # Calculate win rate by summonerId and championId
+
+def find_proficient_players_for_all_champions():
+    df = load_data_specialist()
+    if df.empty:
+        return []
+
+    # Calculate win rates
     df['win_count'] = df['win']
-    win_rates = df.groupby(['summonerId', 'championId']).agg({
+    stats = df.groupby(['puuid', 'championId']).agg({
+        'riotIdGameName': 'first',
         'win': 'sum',
         'win_count': 'count'
-    }).rename(columns={'win': 'total_wins', 'win_count': 'games_played'})
-    win_rates['win_rate'] = (win_rates['total_wins'] / win_rates['games_played']) * 100
+    }).rename(columns={'win': 'wins', 'win_count': 'games'})
 
-    # Filter out players with less than 10 games and a win rate lower than 52%
-    proficient_players = win_rates[(win_rates['games_played'] >= 10) & (win_rates['win_rate'] >= 52)]
+    stats['win_rate'] = ((stats['wins'] / stats['games']) * 100).round(2)
 
-    # Merge back to original DataFrame to filter and keep only proficient players' data
-    proficient_df = df.merge(proficient_players, on=['summonerId', 'championId'])
+    # Filter for proficient players
+    proficient_df = stats[(stats['games'] >= 3) & (stats['win_rate'] >= 52)]
 
-    # Analyze common items and perks
-    item_columns = ['item0', 'item1', 'item2', 'item3', 'item4', 'item5']
-    perk_columns = ['primaryPerk0', 'primaryPerk1', 'primaryPerk2', 'primaryPerk3']
+    # Prepare the output
+    proficient_df = proficient_df.reset_index()
+    proficient_df = proficient_df[['puuid', 'riotIdGameName', 'championId', 'games', 'wins', 'win_rate']]
+    
+    # Order by championId
+    proficient_df = proficient_df.sort_values(by='championId')
 
-    # Count frequency of items and perks
-    item_frequencies = proficient_df[item_columns].apply(pd.Series.value_counts).sum(axis=1).sort_values(ascending=False)
-    perk_frequencies = proficient_df[perk_columns].apply(pd.Series.value_counts).sum(axis=1).sort_values(ascending=False)
+    mastery_list = find_popular_perks(proficient_df)
 
-    # return item_frequencies, perk_frequencies
+    specialist_data = {
+        "proficientPlayers": proficient_df.to_dict('records'),  # Convert DataFrame to list of dicts
+        "masteryData": mastery_list
+    }
 
-    return item_frequencies.head()
+    return specialist_data
+
+
+def find_popular_perks(proficient_df):
+    if proficient_df.empty:
+        return []
+
+    # Load the full participants data
+    full_df = load_data_specialist()
+    if full_df.empty:
+        return []
+
+    # Merge to filter only proficient player data
+    proficient_data = full_df.merge(proficient_df[['puuid', 'championId']], on=['puuid', 'championId'])
+
+    # Determine the most popular primary and sub styles for each champion
+    popular_styles = proficient_data.groupby('championId').agg({
+        'primaryStyle': lambda x: int(x.mode().iloc[0]),  # Ensure the mode is converted to int
+        'subStyle': lambda x: int(x.mode().iloc[0])  # Ensure the mode is converted to int
+    }).reset_index()
+
+    results = []
+
+    # For each champion, find the most popular primary and sub perks for the most popular styles
+    for index, row in popular_styles.iterrows():
+        champion_id = int(row['championId'])  # Convert to int
+        primary_style = int(row['primaryStyle'])
+        sub_style = int(row['subStyle'])
+
+        # Filter the proficient dataframe for this champion and style
+        champ_df = proficient_data[(proficient_data['championId'] == champion_id) & 
+                                   (proficient_data['primaryStyle'] == primary_style) & 
+                                   (proficient_data['subStyle'] == sub_style)]
+
+        # Calculate the most popular perks for the identified styles
+        primary_perks = {col: int(champ_df[col].mode().iloc[0]) for col in ['primaryPerk0', 'primaryPerk1', 'primaryPerk2', 'primaryPerk3']}
+        sub_perks = {col: int(champ_df[col].mode().iloc[0]) for col in ['subPerk0', 'subPerk1']}
+
+        # Append the results
+        results.append({
+            'championId': champion_id,
+            'primaryStyle': primary_style,
+            **primary_perks,
+            'subStyle': sub_style,
+            **sub_perks
+        })
+
+    return results
+

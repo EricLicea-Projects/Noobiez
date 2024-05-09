@@ -1,28 +1,41 @@
-// Import the champions mapping
+import { SimpleGrid } from "@chakra-ui/react";
 import { champions } from "../../types/championTypes";
-import { Link } from "react-router-dom";
-import { SimpleGrid, Image, Box } from "@chakra-ui/react";
+import useFetchSpecialist from "../../hooks/useFetchSpecialist";
+import ChampionGridEntry from "./ChampionGridEntry"; // Make sure the path is correct
 
 const ChampionGrid = () => {
+  const { data, loading, error } = useFetchSpecialist();
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  const getProficientPlayersForChampion = (championId: number) => {
+    return (
+      data?.proficientPlayers.filter(
+        (player) => player.championId === championId
+      ) || []
+    );
+  };
+
+  const sortedMasteryData = data
+    ? data.masteryData
+        .map((mastery) => ({
+          ...mastery,
+          name: champions[mastery.championId.toString()],
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name))
+    : [];
+
   return (
     <SimpleGrid columns={{ base: 2, md: 5, lg: 8 }} spacing={3} p={3}>
-      {Object.entries(champions).map(([id, name]) => (
-        <Box
-          key={id}
-          as={Link}
-          to={`/OTP/${id}`}
-          _hover={{ transform: "scale(1.1)", transition: "transform .2s" }}
-        >
-          <Image
-            key={id}
-            src={`/champion/${id}.png`} // Assuming the public directory structure
-            alt={`${name}`} // Provides a meaningful description for each image
-            boxSize="100px" // Adjust size as necessary
-            objectFit="cover"
-            borderRadius="md" // Optional for rounded corners
-            ml={10}
-          />
-        </Box>
+      {sortedMasteryData.map((mastery) => (
+        <ChampionGridEntry
+          key={mastery.championId}
+          mastery={mastery}
+          proficientPlayers={getProficientPlayersForChampion(
+            mastery.championId
+          )}
+        />
       ))}
     </SimpleGrid>
   );

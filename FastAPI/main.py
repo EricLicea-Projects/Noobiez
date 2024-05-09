@@ -132,10 +132,10 @@ async def read_matches(puuid: str = Query(...)):
     else:
         raise HTTPException(status_code=400, detail="No Match Data")
 
-@app.get("/noobiez/win_rate")
+@app.get("/noobiez/specialist")
 async def get_win_rate():
-    win_rate = analyze_data()
-    if True:
+    win_rate = find_proficient_players_for_all_champions()
+    if win_rate:
         return win_rate
     else:
         raise HTTPException(status_code=400, detail='No Win Rate')

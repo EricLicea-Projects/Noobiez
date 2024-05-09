@@ -5,7 +5,11 @@ import { Mastery } from "../../types/specialistTypes";
 
 interface ChampionMastersRuneSheetProps {
   mastery: Mastery;
-  mode: "Primary" | "Sub"; // Indicates whether this is a primary or sub rune sheet
+  mode: "Primary" | "Sub";
+}
+
+interface StyleTitles {
+  [key: number]: string;
 }
 
 const ChampionMastersRuneSheet: React.FC<ChampionMastersRuneSheetProps> = ({
@@ -13,7 +17,7 @@ const ChampionMastersRuneSheet: React.FC<ChampionMastersRuneSheetProps> = ({
   mode,
 }) => {
   const styleId = mode === "Primary" ? mastery.primaryStyle : mastery.subStyle;
-  const styleTitles = {
+  const styleTitles: StyleTitles = {
     8000: "Precision",
     8100: "Domination",
     8200: "Sorcery",

@@ -14,12 +14,13 @@ import PlayerCard from "../components/profile_ui/PlayerCard";
 import MatchCard from "../components/profile_ui/MatchCard";
 import MatchCardHeader from "../components/profile_ui/MatchCardHeader";
 import MatchCardTeamContainer from "../components/profile_ui/MatchCardTeamContainer";
+import { Match } from "../types/matchTypes";
 
 const ProfilesPage = () => {
   const { playerData } = useContext(PlayerContext);
   const { matches, isLoading, error } = useFetchMatches(playerData?.puuid);
 
-  const findPlayerParticipant = (match) => {
+  const findPlayerParticipant = (match: Match) => {
     return match.participants.find(
       (participant) => participant.puuid === playerData?.puuid
     );
@@ -111,7 +112,19 @@ const ProfilesPage = () => {
   return (
     <Grid h="100%" templateColumns="repeat(4, 1fr)" gap={2}>
       <GridItem colSpan={1}>
-        <PlayerCard {...playerData} />
+        <PlayerCard
+          {...(playerData ?? {
+            puuid: "",
+            accountId: "",
+            summonerId: "",
+            gameName: "Unknown Player",
+            tagLine: "Damn",
+            profileIconId: 69, // Consider using a default icon ID
+            summonerLevel: 0,
+            tier: "UNRANKED",
+            rank: "?",
+          })}
+        />
       </GridItem>
       <GridItem colSpan={2}>
         {renderContent()} {/* Cleaned up rendering logic */}

@@ -1,4 +1,4 @@
-import { Box, HStack, Image, VStack, Text, Flex } from "@chakra-ui/react";
+import { HStack, Image, VStack, Flex } from "@chakra-ui/react";
 import { Participant } from "../../types/matchTypes";
 
 import MatchCardPerkImage from "./MatchCardPerkImage";

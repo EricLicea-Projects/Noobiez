@@ -1,5 +1,6 @@
 import sqlite3
 import pandas as pd
+import numpy as np
 from sqlite3 import Error
 from typing import Any, Dict, List
 from database_operations.utility.MatchDataProcessor import MatchDataProcessor
@@ -184,6 +185,10 @@ def fetch_player_games(puuid):
                 "teams": teams
             }
             games.append(game)
+
+        # Sort games by gameCreation in descending order
+        games = sorted(games, key=lambda x: x["matchInfo"]["gameCreation"], reverse=True)
+
         
         return games
     except Error as e:
@@ -256,35 +261,51 @@ def find_popular_perks(proficient_df):
 
     # Determine the most popular primary and sub styles for each champion
     popular_styles = proficient_data.groupby('championId').agg({
-        'primaryStyle': lambda x: int(x.mode().iloc[0]),  # Ensure the mode is converted to int
-        'subStyle': lambda x: int(x.mode().iloc[0])  # Ensure the mode is converted to int
+        'primaryStyle': lambda x: int(x.mode().iloc[0]) if not x.mode().empty else None,
+        'subStyle': lambda x: int(x.mode().iloc[0]) if not x.mode().empty else None
     }).reset_index()
 
     results = []
 
     # For each champion, find the most popular primary and sub perks for the most popular styles
     for index, row in popular_styles.iterrows():
-        champion_id = int(row['championId'])  # Convert to int
-        primary_style = int(row['primaryStyle'])
-        sub_style = int(row['subStyle'])
+        champion_id = int(row['championId']) if row['championId'] is not None else None
+        primary_style = int(row['primaryStyle']) if row['primaryStyle'] is not None else None
+        sub_style = int(row['subStyle']) if row['subStyle'] is not None else None
+
+        if primary_style is None or sub_style is None:
+            continue  # Skip if no popular style was found
 
         # Filter the proficient dataframe for this champion and style
         champ_df = proficient_data[(proficient_data['championId'] == champion_id) & 
                                    (proficient_data['primaryStyle'] == primary_style) & 
                                    (proficient_data['subStyle'] == sub_style)]
 
-        # Calculate the most popular perks for the identified styles
-        primary_perks = {col: int(champ_df[col].mode().iloc[0]) for col in ['primaryPerk0', 'primaryPerk1', 'primaryPerk2', 'primaryPerk3']}
-        sub_perks = {col: int(champ_df[col].mode().iloc[0]) for col in ['subPerk0', 'subPerk1']}
+        primary_perks = {}
+        sub_perks = {}
 
-        # Append the results
-        results.append({
+        for col in ['primaryPerk0', 'primaryPerk1', 'primaryPerk2', 'primaryPerk3']:
+            mode_result = champ_df[col].mode()
+            if not mode_result.empty:
+                primary_perks[col] = int(mode_result.iloc[0])
+
+        for col in ['subPerk0', 'subPerk1']:
+            mode_result = champ_df[col].mode()
+            if not mode_result.empty:
+                sub_perks[col] = int(mode_result.iloc[0])
+
+        if not primary_perks or not sub_perks:
+            continue  # Skip if no popular perks were found
+
+        result = {
             'championId': champion_id,
             'primaryStyle': primary_style,
             **primary_perks,
             'subStyle': sub_style,
             **sub_perks
-        })
+        }
+        # Convert all numpy.int64 and similar types to Python native types for JSON serialization
+        results.append({k: v.item() if isinstance(v, np.generic) else v for k, v in result.items()})
 
     return results
 

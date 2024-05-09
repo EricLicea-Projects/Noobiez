@@ -25,8 +25,14 @@ const PlayerCard = ({
   const { isLoading, fetchMatches } = useMatchUpdate();
 
   const handleUpdate = () => {
-    fetchMatches(puuid);
+    if (puuid) {
+      fetchMatches(puuid);
+    } else {
+      console.error("No puuid available");
+      // Optionally, handle the error in a user-friendly way
+    }
   };
+
   return (
     <Card maxW="sm" align="center" color="teal" bg="blackAlpha.700">
       <CardBody width="100%">

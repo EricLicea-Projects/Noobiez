@@ -8,11 +8,11 @@ interface Props {
 
 const MatchCardKDA = ({ kills, deaths, assists }: Props) => {
   // Function to determine the kill color based on the kill count
-  const getKillColor = (kills: number) => {
-    if (kills >= 10) return "teal.300";
-    if (kills >= 5) return "green.200";
-    return "green.50"; // Default color
-  };
+  // const getKillColor = (kills: number) => {
+  //   if (kills >= 10) return "teal.300";
+  //   if (kills >= 5) return "green.200";
+  //   return "green.50"; // Default color
+  // };
 
   // Function to determine the death color based on the death count
   const getDeathColor = (deaths: number) => {

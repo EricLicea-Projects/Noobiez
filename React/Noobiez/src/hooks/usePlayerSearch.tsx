@@ -19,7 +19,7 @@ export const usePlayerSearch = () => {
         },
       });
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       setError("Failed to fetch player data");
       console.error("Axios error:", error.response);
       return null;
@@ -40,7 +40,7 @@ export const usePlayerSearch = () => {
         },
       });
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       setError("Failed to fetch player data");
       console.error("Axios error:", error.response);
       return null;

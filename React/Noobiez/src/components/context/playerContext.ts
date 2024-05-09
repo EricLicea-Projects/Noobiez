@@ -1,15 +1,15 @@
 import { createContext } from "react";
 
 export interface PlayerData {
-  puuid: string;
-  accountId: string;
-  summonerId: string;
-  gameName: string;
-  tagLine: string;
-  profileIconId: number;
-  summonerLevel: number;
-  tier: string;
-  rank: string;
+  puuid?: string;
+  accountId?: string;
+  summonerId?: string;
+  gameName?: string;
+  tagLine?: string;
+  profileIconId?: number;
+  summonerLevel?: number;
+  tier?: string;
+  rank?: string;
 }
 
 interface PlayerContextType {

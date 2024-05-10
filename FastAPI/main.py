@@ -14,6 +14,11 @@ app.add_middleware(
     allow_headers=['*'],
 )
 
+@app.get('/')
+async def hello():
+    return {'Welcome to Snuggie Net'}
+
+
 @app.get('/riotAPI/player/')
 async def get_player(gameName: str = Query(...), tagLine: str = Query(...)):
     player_data = await get_riot_account_info(gameName, tagLine)

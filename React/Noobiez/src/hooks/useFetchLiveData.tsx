@@ -11,7 +11,7 @@ const useFetchLiveData = (puuid: string | undefined) => {
     const fetchData = async () => {
       try {
         const response = await axios.get<LiveData>(
-          `http://localhost:8000/riotAPI/liveGame/`,
+          `http://3.95.247.155:8000/riotAPI/liveGame/`,
           { params: { puuid } }
         );
         setData(response.data);

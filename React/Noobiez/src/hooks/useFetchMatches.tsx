@@ -15,7 +15,7 @@ const useFetchMatches = (puuid: string | undefined) => {
 
     const fetchMatches = async () => {
       setIsLoading(true);
-      const apiUrl = `http://localhost:8000/noobiez/matches`;
+      const apiUrl = `http://3.95.247.155:8000/noobiez/matches`;
 
       try {
         const response = await axios.get<Match[]>(apiUrl, {

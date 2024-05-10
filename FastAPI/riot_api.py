@@ -38,14 +38,14 @@ async def get_summoner_rank(summoner_id: str):
 
 
 
-# async def get_match_ids(puuid: str) -> list:
-#     url = f"https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids"
-#     return await fetch_from_riot_api(url)
-
-
-async def get_match_ids(puuid: str, queue_type: int = 420, count: int = 75) -> list:
-    url = f"https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?queue={queue_type}&start=0&count={count}"
+async def get_match_ids(puuid: str) -> list:
+    url = f"https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?start=0&count=7"
     return await fetch_from_riot_api(url)
+
+
+# async def get_match_ids(puuid: str, queue_type: int = 420, count: int = 75) -> list:
+#     url = f"https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?queue={queue_type}&start=0&count={count}"
+#     return await fetch_from_riot_api(url)
 
 
 async def get_match_data(match_id: str):

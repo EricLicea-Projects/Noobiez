@@ -11,7 +11,7 @@ const useMatchUpdate = () => {
     setIsLoading(true);
     try {
       const response = await axios.get<MatchesApiResponse>(
-        `http://localhost:8000/riotAPI/matches/`,
+        `http://3.95.247.155:8000/riotAPI/matches/`,
         { params: { puuid } }
       );
       setData(response.data.matches); // Assuming the data is directly under 'matches'

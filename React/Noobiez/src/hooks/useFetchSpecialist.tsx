@@ -13,7 +13,7 @@ const useFetchSpecialist = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get<SpecialistData>(
-          `http://localhost:8000/noobiez/specialist`
+          `http://3.95.247.155:8000/noobiez/specialist`
         );
         if (isMounted) {
           setData(response.data);

@@ -9,7 +9,7 @@ export const usePlayerSearch = () => {
     setIsLoading(true);
     setError(null);
     const [gameName, tagLine] = riotId.split("#");
-    const apiUrl = `http://localhost:8000/riotAPI/player`;
+    const apiUrl = `http://3.95.247.155:8000/riotAPI/player`;
 
     try {
       const response = await axios.get(apiUrl, {
@@ -31,7 +31,7 @@ export const usePlayerSearch = () => {
   const searchPuuid = async (puuid: string) => {
     setIsLoading(true);
     setError(null);
-    const apiUrl = `http://localhost:8000/riotAPI/puuid`;
+    const apiUrl = `http://3.95.247.155:8000/riotAPI/puuid`;
 
     try {
       const response = await axios.get(apiUrl, {
